@@ -1,0 +1,1 @@
+java -cp .;@classesDirName@;@bootstrapJarName@ -jar @bootstrapJarName@

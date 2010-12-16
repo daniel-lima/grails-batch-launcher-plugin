@@ -1,0 +1,17 @@
+<plugin name='batch-launcher' version='0.1' grailsVersion='1.3.3 &gt; *'>
+  <author>Daniel Henrique Alves Lima</author>
+  <authorEmail>email_daniel_h@yahoo.com.br</authorEmail>
+  <title>Plugin to load and run batch (non-webapp) Grails application</title>
+  <description>\
+Brief description of the plugin.
+</description>
+  <documentation>http://grails.org/plugin/batch-launcher</documentation>
+  <resources>
+    <resource>BuildConfig</resource>
+    <resource>Config</resource>
+    <resource>DataSource</resource>
+    <resource>UrlMappings</resource>
+  </resources>
+  <dependencies />
+  <behavior />
+</plugin>
