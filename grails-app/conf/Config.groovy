@@ -24,3 +24,10 @@ log4j = {
 }
 
 println "Hello world!"
+
+/*Thread t = new Thread() {
+  public void run() {
+    println "Waiting..."
+    Thread.sleep(10000)
+  }
+  }.start()*/

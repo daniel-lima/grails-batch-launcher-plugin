@@ -12,12 +12,13 @@ def props = binding.batch
 props.bootstrapClassName = "org.codehaus.groovy.grails.plugins.batch.Bootstrap"
 props.pluginScannerEnabled = true
 props.useGroovyClassLoader = false
-props.autoRecompile = "true".equals(System.getProperty("disable.auto.recompile", "true"))? true: false
+props.autoRecompile = "false".equals(System.getProperty("disable.auto.recompile", "false"))? true: false
 props.autoRecompileFrequency = 3
 props.args = null
 props.infiniteLoop = true
-props.autoReload = "true".equals(System.getProperty("batch.disable.auto.reload", "true"))? true: false
+props.autoReload = "false".equals(System.getProperty("batch.disable.auto.reload", "false"))? true: false
 props.autoReloadFrequency = 3
+props.reloadFilename = ".batch_reload"
 props.bootstrapJarExploded = "true".equals(System.getProperty("batch.bootstrap.jar.exploded", "false"))? true: false
 
 target(_batchStartLogging: "Bootstrap logging") {

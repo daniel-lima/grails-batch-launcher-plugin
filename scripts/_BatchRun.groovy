@@ -58,12 +58,18 @@ target(_batchRunApp: "") {
   if (autoReload && (!killThread || !killThread.isAlive())) {
     def exec = {
       def ant = new AntBuilder(ant.project)  // To avoid concurrent access to AntBuilder
-      def baseDir = new File(".")
-      long lastModified = baseDir.lastModified()
+      //def baseDir = new File(".")
+      //long lastModified = baseDir.lastModified()
+      def touchFile = new File(props.reloadFilename)
+      if (!touchFile.exists()) {
+	touchFile.createNewFile()
+      }
+      long lastModified = touchFile.lastModified()
       
       while (true) {
 	Thread.sleep(autoReloadFrequency * 1000)
-	long lastModified2 = baseDir.lastModified()
+	//long lastModified2 = baseDir.lastModified()
+	long lastModified2 = touchFile.lastModified()
 	if (lastModified2 > lastModified) {
 	  lastModified = lastModified2
 	  _batchKill(props)
@@ -233,9 +239,15 @@ _postBatchRun = {
 
 
 target(_batchReloadApp: "") {
-  def file = File.createTempFile("touch", "tmp", new File("."))
-  file.deleteOnExit()
-  file.delete()
+  //def file = File.createTempFile("touch", "tmp", new File("."))
+  //file.deleteOnExit()
+  //file.delete()
+  def file = new File(props.reloadFilename)
+  if (!file.exists()) {
+    file.createNewFile()
+  }
+
+  file.setLastModified(System.currentTimeMillis())
 }
 
 
