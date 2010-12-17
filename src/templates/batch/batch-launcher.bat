@@ -1,1 +1,1 @@
-java -cp .;@classesDirName@;@bootstrapJarName@ -jar @bootstrapJarName@
+java -cp .;@classesDirName@;@bootstrapJarName@;@windowsLibClasspath@ -jar @bootstrapJarName@ %*

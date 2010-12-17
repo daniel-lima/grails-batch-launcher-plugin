@@ -1,2 +1,2 @@
 #!/bin/sh
-java -cp .:@classesDirName@:@bootstrapJarName@ -jar @bootstrapJarName@
+java -cp .:@classesDirName@:@bootstrapJarName@:@linuxLibClasspath@ -jar @bootstrapJarName@ $*

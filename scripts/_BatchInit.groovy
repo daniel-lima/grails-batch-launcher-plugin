@@ -9,18 +9,18 @@ _grails_batch_init_package_called = true
 binding.batch = [:]
 
 def props = binding.batch
-props.bootstrapClassName = "net.sf.grails.batch.Bootstrap"
+props.bootstrapClassName = "org.codehaus.groovy.grails.plugins.batch.Bootstrap"
 props.pluginScannerEnabled = true
 props.useGroovyClassLoader = false
 props.autoRecompile = "true".equals(System.getProperty("disable.auto.recompile", "true"))? true: false
 props.autoRecompileFrequency = 3
 props.args = null
 props.infiniteLoop = true
-props.autoReload = "true".equals(System.getProperty("batch.disable.auto.recompile", "true"))? true: false
+props.autoReload = "true".equals(System.getProperty("batch.disable.auto.reload", "true"))? true: false
 props.autoReloadFrequency = 3
+props.bootstrapJarExploded = "true".equals(System.getProperty("batch.bootstrap.jar.exploded", "false"))? true: false
 
-
-target(_batchStartLogging: "Bootstraps logging") {
+target(_batchStartLogging: "Bootstrap logging") {
   /*ant.echo("props " + props)
   ant.echo("props " + binding.batch)
   ant.echo("props " + batch)*/
