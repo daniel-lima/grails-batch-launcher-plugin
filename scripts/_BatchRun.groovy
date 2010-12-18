@@ -1,10 +1,23 @@
+/*
+ * Copyright 2010 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * @author Daniel Henrique Alves Lima
+ */
 import org.codehaus.groovy.grails.plugins.PluginManagerHolder
-
-//import net.sf.grails.batch.InternalSecurityManager
-//import net.sf.grails.batch.ExitTrappedException
-
-//import java.security.Permission
-
 import org.codehaus.groovy.tools.shell.util.NoExitSecurityManager
 
 if (binding.variables.containsKey("_grails_batch_run_package_called")) {
@@ -58,17 +71,11 @@ target(_batchRunApp: "") {
   if (autoReload && (!killThread || !killThread.isAlive())) {
     def exec = {
       def ant = new AntBuilder(ant.project)  // To avoid concurrent access to AntBuilder
-      //def baseDir = new File(".")
-      //long lastModified = baseDir.lastModified()
-      def touchFile = new File(props.reloadFilename)
-      if (!touchFile.exists()) {
-	touchFile.createNewFile()
-      }
+      def touchFile = _createReloadFile(props)
       long lastModified = touchFile.lastModified()
       
       while (true) {
 	Thread.sleep(autoReloadFrequency * 1000)
-	//long lastModified2 = baseDir.lastModified()
 	long lastModified2 = touchFile.lastModified()
 	if (lastModified2 > lastModified) {
 	  lastModified = lastModified2
@@ -237,16 +244,18 @@ _postBatchRun = {
     }
 }
 
-
-target(_batchReloadApp: "") {
-  //def file = File.createTempFile("touch", "tmp", new File("."))
-  //file.deleteOnExit()
-  //file.delete()
-  def file = new File(props.reloadFilename)
+_createReloadFile = {
+  myProps ->
+  def file = new File(myProps.reloadFilename)
   if (!file.exists()) {
     file.createNewFile()
   }
+  ant.attrib(file: file,hidden: true)
+  return file
+}
 
+target(_batchReloadApp: "") {
+  def file = _createReloadFile(props)
   file.setLastModified(System.currentTimeMillis())
 }
 
@@ -281,8 +290,6 @@ target(_batchAutoRecompile: "") {
   profile("Compiling sources to location [$classesDirPath]") {
     try {
       String classpathId = "grails.compile.classpath"
-      //def sourceDirs = new File("${basedir}/grails-app").listFiles({dir, name -> !name.equals("conf")} as FilenameFilter)
-      //ant.echo("sourceDirs " + sourceDirs)
 
       /* To avoid continuous resources.groovy recompilation. */
       ant.groovyc(destdir:classesDirPath,
@@ -317,20 +324,3 @@ target(_batchAutoRecompile: "") {
 }
 
 
-static class InternalSecurityManager extends SecurityManager {
-
-    InternalSecurityManager() {
-    }
-
-  /*@Override
-    public void checkPermission(Permission permission) {
-      //if ("exitVM".equals(permission.getName())) {
-	  //throw new ExitTrappedException();
-	  //System.out.println("ok security")
-	  //}
-	  }*/
-
-}
-
-static class ExitTrappedException extends SecurityException {
-}

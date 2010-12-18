@@ -1,3 +1,18 @@
+/*
+ * Copyright 2010 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.codehaus.groovy.grails.plugins.batch;
 
 import javax.servlet.ServletContext;
@@ -34,6 +49,9 @@ import org.apache.commons.logging.LogFactory;
 
 //import org.apache.log4j.Logger;
 
+/**
+ * @author Daniel Henrique Alves Lima
+ */
 public class Bootstrap {
 
     public static final Log LOG = LogFactory.getLog(Bootstrap.class);
@@ -46,28 +64,12 @@ public class Bootstrap {
     
     public void init(String [] args) {
 	LOG.debug("init(): begin");
-	// System.out.println("" + LOG);
-	// System.out.println("" + LOG.isErrorEnabled());
-	// System.out.println("" + LOG.isDebugEnabled());
-	// System.out.println("" + LOGGER.getLevel());
-	// LOG.error("BLA1"); LOG.debug("BLA1");
-	// LOGGER.error("BLA1"); LOGGER.debug("BLA1");
-	// System.out.println("+++++++++++++++++++ " + Thread.currentThread().getContextClassLoader());
-	// System.out.println("+++++++++++++++++++ " + this.getClass().getClassLoader());
-	// System.out.println("args " + java.util.Arrays.asList(args));
 
 	if (LOG.isDebugEnabled()) {
 	    LOG.debug("init(): this classLoader " + this.getClass().getClassLoader());
 	    LOG.debug("init(): thread classLoader " + Thread.currentThread().getContextClassLoader());
 	}
 
-	/*if (1 == 1) {
-	  throw new RuntimeException("bla__");
-	  }*/
-
-	//Thread.currentThread().setContextClassLoader(new GrailsAwareClassLoader());
-
-	// System.out.println("environment " + Environment.getCurrent());
 	if (LOG.isDebugEnabled()) {
 	    LOG.debug("init(): env " + Environment.getCurrent());
 	}
@@ -78,7 +80,6 @@ public class Bootstrap {
 	    resourcePath = "war";
 	    break;
 	default:
-	    //resourcePath = (new java.io.File("web-app")).getAbsolutePath();
 	    resourcePath = "web-app";
 	}
 
@@ -86,17 +87,8 @@ public class Bootstrap {
 	    LOG.debug("init(): resourcePath " + resourcePath);
 	}
 
-	// System.out.println("path " + resourcePath);
 	servletContext = resourcePath != null? new MockServletContext(resourcePath): new MockServletContext();
 	servletContext.setAttribute("args", args);
-
-	/*try {
-	// System.out.println("path " + servletContext.getResource("/"));
-	// System.out.println("path " + servletContext.getResource(""));
-	// System.out.println("path " + servletContext.getResource("."));
-	} catch (java.net.MalformedURLException e) {
-	throw new RuntimeException(e);
-	}*/
 
 	servletContextListeners = new ServletContextListener[] {
 	    new Log4jConfigListener(),
@@ -108,13 +100,6 @@ public class Bootstrap {
 		ServletContextEvent event = new ServletContextEvent(servletContext);
 		for (ServletContextListener l : servletContextListeners) {
 		    l.contextInitialized(event);
-		    // System.out.println("" + l + " ok");
-		    // System.out.println("" + LOG);
-		    // System.out.println("" + LOG.isErrorEnabled());
-		    // System.out.println("" + LOG.isDebugEnabled());
-		    // System.out.println("" + LOGGER.getLevel());
-		    // LOG.error("BLA2");LOG.debug("BLA1");
-		    // LOGGER.error("BLA1"); LOGGER.debug("BLA1");
 		}
 	    } catch (RuntimeException e) {
 	    LOG.error("init()", e);
@@ -139,11 +124,9 @@ public class Bootstrap {
 	}
 	else {
 	    webContext = GrailsConfigUtils.configureWebApplicationContext(servletContext, parent);
-	    // System.out.println("configureWebApplicationContext ok");
 
 	    try {
 		GrailsConfigUtils.executeGrailsBootstraps(application, webContext, servletContext);
-		// System.out.println("executeGrailsBootstraps ok");
 	    }
 	    catch (Exception e) {
 		LOG.debug("init()", e);
@@ -156,41 +139,17 @@ public class Bootstrap {
 	    }
 	}
 
-	/*
-	  boolean x = true;
-	  try {
-	  while (x) {
-	  // System.out.println(Bootstrap.class.getName() + ": " + Thread.currentThread() + " " + new java.util.Date());
-	  Thread.sleep(10000);
-	  }
-	  } catch (Exception e) {
-	  }*/
-
-	// System.out.println("+++++++++++++++++++ " + Thread.currentThread().getContextClassLoader());
-	// System.out.println("+++++++++++++++++++ " + this.getClass().getClassLoader());
 
 	if (LOG.isDebugEnabled()) {
 	    LOG.debug("init(): thread classLoader " + Thread.currentThread().getContextClassLoader());
 	}
 
 
-	/*GrailsPluginManager pm = PluginManagerHolder.getPluginManager();
-	  if (pm instanceof DefaultGrailsPluginManager) {
-	  ((DefaultGrailsPluginManager) pm).startPluginChangeScanner();
-	  }*/
-
-	/*if (1 == 1) {
-	    throw new Error("abc");
-	    }*/
 	LOG.debug("init(): end");
     }
 
     public void destroy() {
 	LOG.debug("destroy(): begin");
-	/*GrailsPluginManager pm = PluginManagerHolder.getPluginManager();
-	  if (pm instanceof DefaultGrailsPluginManager) {
-	  ((DefaultGrailsPluginManager) pm).stopPluginChangeScanner();
-	  }*/
 
 	GrailsApplication grailsApplication = webContext.getBean(GrailsApplication.APPLICATION_ID, GrailsApplication.class);
     
@@ -214,7 +173,6 @@ public class Bootstrap {
 
 
     public static void main(String [] args) {
-	// System.out.println(Bootstrap.class.getName()+ ".main() - begin " + new java.util.Date());
 	if (LOG.isDebugEnabled()) {
 	    LOG.debug("main(): begin " + Bootstrap.class.getName()+ " - " + new java.util.Date());
 	}
@@ -226,7 +184,5 @@ public class Bootstrap {
 	if (LOG.isDebugEnabled()) {
 	    LOG.debug("main(): end " + Bootstrap.class.getName()+ " - " + new java.util.Date());
 	}
-
-	// System.out.println(Bootstrap.class.getName()+ ".main() - end " + new java.util.Date());
     }
 }
