@@ -21,6 +21,7 @@ import javax.servlet.ServletContextEvent;
 
 import org.codehaus.groovy.grails.web.context.GrailsConfigUtils;
 import org.codehaus.groovy.grails.commons.GrailsApplication;
+import org.codehaus.groovy.grails.commons.ApplicationHolder;
 
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.context.WebApplicationContext;
@@ -109,7 +110,7 @@ public class Bootstrap {
 	    };
 	
 	Runtime.getRuntime().addShutdownHook(this.shutdownHook);
-	logDebug("init(): shutdown hook added");
+	logDebug(true, "init(): shutdown hook added");
 
 	try
 	    {
@@ -128,7 +129,7 @@ public class Bootstrap {
 	  parent.setServletContext(servletContext);
 	  //parent.setNamespace(getClass().getName() + ".CONTEXT.");
 	  parent.refresh();*/
-	WebApplicationContext parent = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+	/*WebApplicationContext parent = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
 	WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 	// construct the SpringConfig for the container managed application
@@ -154,7 +155,7 @@ public class Bootstrap {
 	
 		throw new BootstrapException("Error executing bootstraps", e);
 	    }
-	}
+	    }*/
 
 
 	logDebug("init(): thread classLoader ", Thread.currentThread().getContextClassLoader());
@@ -164,8 +165,10 @@ public class Bootstrap {
     public void destroy() {
 	logDebug("destroy(): begin");
 
-	GrailsApplication grailsApplication = webContext.getBean(GrailsApplication.APPLICATION_ID, GrailsApplication.class);
+	//GrailsApplication grailsApplication = webContext.getBean(GrailsApplication.APPLICATION_ID, GrailsApplication.class);
     
+	GrailsApplication grailsApplication = ApplicationHolder.getApplication();
+
 	GrailsClass[] bootstraps =  grailsApplication.getArtefacts(BootstrapArtefactHandler.TYPE);
 	for (int i = bootstraps.length - 1; i >= 0; i--) {
 	    GrailsClass bootstrap = bootstraps[i];
@@ -184,7 +187,7 @@ public class Bootstrap {
 	if (shutdownHook != null) {
 	    if (!shutdownHook.isAlive()) {
 		Runtime.getRuntime().removeShutdownHook(this.shutdownHook);
-		logDebug("destroy(): shutdown hook removed");
+		logDebug(true, "destroy(): shutdown hook removed");
 	    }
 	    this.shutdownHook = null;
 	}

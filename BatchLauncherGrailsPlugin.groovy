@@ -26,6 +26,7 @@ class BatchLauncherGrailsPlugin {
     def dependsOn = [:]
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
+      "grails-app/conf/**/Test*",
       "grails-app/views/**/*",
       "grails-app/taglibs/**/*",
       "grails-app/controllers/**/*",

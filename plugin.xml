@@ -10,6 +10,7 @@ Plugin to load and run batch (non-webapp/webless) Grails application.
     <resource>BuildConfig</resource>
     <resource>Config</resource>
     <resource>DataSource</resource>
+    <resource>TestBootStrap</resource>
     <resource>UrlMappings</resource>
   </resources>
   <dependencies />
