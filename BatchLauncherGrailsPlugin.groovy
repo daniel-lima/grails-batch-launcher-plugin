@@ -19,22 +19,27 @@
  */
 class BatchLauncherGrailsPlugin {
     // the plugin version
-    def version = "0.4"
+    def version = "0.4.1"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.3.3 > *"
     // the other plugins this plugin depends on
     def dependsOn = [:]
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
-            "grails-app/views/error.gsp"
+      "grails-app/views/**/*",
+      "grails-app/taglibs/**/*",
+      "grails-app/controllers/**/*",
+      "web-app/css/**/*",
+      "web-app/images/**/*",
+      "web-app/js/**/*"
     ]
 
     // TODO Fill in these fields
     def author = "Daniel Henrique Alves Lima"
     def authorEmail = "email_daniel_h@yahoo.com.br"
-    def title = "Plugin to load and run batch (non-webapp) Grails application"
+    def title = "Plugin to load and run batch (non-webapp/webless) Grails application"
     def description = '''\\
-Brief description of the plugin.
+Plugin to load and run batch (non-webapp/webless) Grails application.
 '''
 
     // URL to the plugin's documentation

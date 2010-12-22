@@ -54,38 +54,43 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Bootstrap {
 
-    public static final Log LOG = LogFactory.getLog(Bootstrap.class);
+    private final String className = getClass().getName();
+    private final Log log = LogFactory.getLog(getClass());
     //    public static final Logger LOGGER = Logger.getLogger(Bootstrap.class);
 
     private ServletContext servletContext;
     private ServletContextListener [] servletContextListeners;
 
     private WebApplicationContext webContext;
+
+    private final boolean logEnabled;
     
+    private Thread shutdownHook;
+    
+    public Bootstrap() {
+	logEnabled = "true".equals(getSystemProperty("debugBootstrap", "false"));
+    }
+
     public void init(String [] args) {
-	LOG.debug("init(): begin");
+	logDebug(true, "init(): begin");
 
-	if (LOG.isDebugEnabled()) {
-	    LOG.debug("init(): this classLoader " + this.getClass().getClassLoader());
-	    LOG.debug("init(): thread classLoader " + Thread.currentThread().getContextClassLoader());
-	}
+	logDebug(true, "init(): this classLoader ", this.getClass().getClassLoader());
+	logDebug(true, "init(): thread classLoader ", Thread.currentThread().getContextClassLoader());
 
-	if (LOG.isDebugEnabled()) {
-	    LOG.debug("init(): env " + Environment.getCurrent());
-	}
+	logDebug(true, "init(): env ", Environment.getCurrent());
 
-	String resourcePath = null;
-	switch(Environment.getCurrent()) {
-	case PRODUCTION:
-	    resourcePath = "war";
-	    break;
-	default:
-	    resourcePath = "web-app";
+	String resourcePath = getSystemProperty("resourcePath", null);
+	if (resourcePath == null) {
+	    switch(Environment.getCurrent()) {
+	    case PRODUCTION:
+		resourcePath = "war";
+		break;
+	    default:
+		resourcePath = "web-app";
+	    }
 	}
-
-	if (LOG.isDebugEnabled()) {
-	    LOG.debug("init(): resourcePath " + resourcePath);
-	}
+	 
+	logDebug(true, "init(): resourcePath ", resourcePath);
 
 	servletContext = resourcePath != null? new MockServletContext(resourcePath): new MockServletContext();
 	servletContext.setAttribute("args", args);
@@ -95,6 +100,17 @@ public class Bootstrap {
 	    new GrailsContextLoaderListener()
 	};
 	
+	this.shutdownHook = new Thread() {
+		
+		public void run() {
+		    logDebug(true, "shutdown hook run():");
+		    Bootstrap.this.destroy();
+		}
+	    };
+	
+	Runtime.getRuntime().addShutdownHook(this.shutdownHook);
+	logDebug("init(): shutdown hook added");
+
 	try
 	    {
 		ServletContextEvent event = new ServletContextEvent(servletContext);
@@ -102,10 +118,11 @@ public class Bootstrap {
 		    l.contextInitialized(event);
 		}
 	    } catch (RuntimeException e) {
-	    LOG.error("init()", e);
+	    log.error("init()", e);
 	    throw e;
 	}
 	
+
 	// No fixed context defined for this servlet - create a local one.
 	/*XmlWebApplicationContext parent = new XmlWebApplicationContext();
 	  parent.setServletContext(servletContext);
@@ -129,7 +146,7 @@ public class Bootstrap {
 		GrailsConfigUtils.executeGrailsBootstraps(application, webContext, servletContext);
 	    }
 	    catch (Exception e) {
-		LOG.debug("init()", e);
+		log.debug("init()", e);
 		GrailsUtil.deepSanitize(e);
 		if (e instanceof BeansException) {
 		    throw (BeansException)e;
@@ -140,49 +157,92 @@ public class Bootstrap {
 	}
 
 
-	if (LOG.isDebugEnabled()) {
-	    LOG.debug("init(): thread classLoader " + Thread.currentThread().getContextClassLoader());
-	}
-
-
-	LOG.debug("init(): end");
+	logDebug("init(): thread classLoader ", Thread.currentThread().getContextClassLoader());
+	logDebug("init(): end");
     }
 
     public void destroy() {
-	LOG.debug("destroy(): begin");
+	logDebug("destroy(): begin");
 
 	GrailsApplication grailsApplication = webContext.getBean(GrailsApplication.APPLICATION_ID, GrailsApplication.class);
     
 	GrailsClass[] bootstraps =  grailsApplication.getArtefacts(BootstrapArtefactHandler.TYPE);
-	for (GrailsClass bootstrap : bootstraps) {
+	for (int i = bootstraps.length - 1; i >= 0; i--) {
+	    GrailsClass bootstrap = bootstraps[i];
 	    ((GrailsBootstrapClass) bootstrap).callDestroy();
 	}
 
 
 	{
 	    ServletContextEvent event = new ServletContextEvent(servletContext);
-	    for (ServletContextListener l : servletContextListeners) {
+	    for (int i = servletContextListeners.length - 1; i >=0; i--) {
+		ServletContextListener l = servletContextListeners[i];
 		l.contextDestroyed(event);
 	    }
 	}
 
-	servletContext = null;	
+	if (shutdownHook != null) {
+	    if (!shutdownHook.isAlive()) {
+		Runtime.getRuntime().removeShutdownHook(this.shutdownHook);
+		logDebug("destroy(): shutdown hook removed");
+	    }
+	    this.shutdownHook = null;
+	}
 
-	LOG.debug("destroy(): end");
+	servletContext = null;
+
+	logDebug(true, "destroy(): end");
+    }
+
+    private static String getSystemProperty(String propertyName, String defaultValue) {
+	propertyName = "grails.plugins.batch." + propertyName;
+	String value = System.getProperty(propertyName);
+	if (value != null && value.length() <= 0) {
+	    value = null;
+	}
+
+	return value != null? value: defaultValue;
     }
 
 
-    public static void main(String [] args) {
-	if (LOG.isDebugEnabled()) {
-	    LOG.debug("main(): begin " + Bootstrap.class.getName()+ " - " + new java.util.Date());
+    private void logDebug(String message, Object ... extra) {
+	logDebug(false, message, extra);
+    }
+
+    private void logDebug(boolean forceSysOut, String message, Object ... extra) {
+	if (logEnabled) {
+	    StringBuilder msg = new StringBuilder(message);
+	    for (Object x : extra) {
+		if (x != null) {
+		    msg.append(x.toString());
+		} else {
+		    msg.append("null");
+		}
+	    }
+
+	    if (log.isDebugEnabled() && !forceSysOut) {
+		log.debug(msg.toString());
+	    } else {
+		System.out.print("[");
+		System.out.print(className);
+		System.out.print("] ");
+		System.out.println(msg);
+	    }
 	}
+    }
 
+    public static void main(String [] args) {
 	Bootstrap r = new Bootstrap();
-	r.init(args);
-	r.destroy();
+	r.logDebug(true, "main(): begin ", new java.util.Date());
 
-	if (LOG.isDebugEnabled()) {
-	    LOG.debug("main(): end " + Bootstrap.class.getName()+ " - " + new java.util.Date());
+	try {
+	    r.init(args);
+	} finally {
+	    try {
+		r.destroy();
+	    } finally {
+		r.logDebug(true, "main(): end ", new java.util.Date());
+	    }
 	}
     }
 }
