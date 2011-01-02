@@ -1,0 +1,3 @@
+The plugin will participate of "grails install-templates":http://grails.org/doc/latest/ref/Command%20Line/install-templates.html.
+
+A set of templates will be installed at src/templates/batch directory. Please, refer to [batch-war|Command Line] to know about how these templates will be handled.
