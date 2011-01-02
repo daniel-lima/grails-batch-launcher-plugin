@@ -5,6 +5,6 @@ It allows:
 
 The created application can use all non-servlet specific parts of a Grails application, like:
 * GORM/Hibernate support;
-* Depedency Injection throw Spring Framework;
+* Dependency Injection through Spring Framework;
 * Transactional service layer;
 * Grails Plugins (provided that the plugin does not depend of a servlet container or webapp environment to run - For example, quartz plugin).

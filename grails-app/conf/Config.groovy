@@ -23,7 +23,7 @@ log4j = {
     warn   'org.mortbay.log'
 }
 
-grails.doc.authors='Daniel Henrique Alves Lima (text revised by contributors)'
+grails.doc.authors='Daniel Henrique Alves Lima (text revised by Gislaine Fonseca Ribeiro and others)'
 grails.doc.license='Apache License 2.0'
 
 grails.doc.alias = [

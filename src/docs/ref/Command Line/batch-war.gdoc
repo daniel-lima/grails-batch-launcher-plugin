@@ -2,7 +2,7 @@ h1. batch-war
 
 h2. Purpose
 
-The @batch-war@ command will package your application to be "deployable"
+Packages your application to be deployed
 
 h2. Examples
 
