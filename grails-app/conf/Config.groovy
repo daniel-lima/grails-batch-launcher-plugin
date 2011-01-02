@@ -29,8 +29,9 @@ grails.doc.license='Apache License 2.0'
 grails.doc.alias = [
   intro: "1. Introduction",
   quickStart: "1.1 Quick Start",
-  bootstrapClasses: "2. Bootstrap Classes",
-  logging: "3. Logging"
+  bootstrapClasses: "2.1. Bootstrap Classes",
+  bootstrapClasses: "2.2. Bootstrap Classes",
+  logging: "2.3. Logging"
 ]
 
 

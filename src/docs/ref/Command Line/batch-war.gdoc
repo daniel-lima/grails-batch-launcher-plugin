@@ -33,7 +33,9 @@ You can also specify a custom environment:
 grails -Dgrails.env=UAT batch-war
 {code}
 
-Once the directory structure has been created you can copy it and use the shell scripts (.bat or .sh) provided to run your application
+Any file inside src/templates/batch will treated as a shell script file (like .bat or .sh files). Simple property replacement is available for these files.
+
+Once the directory structure has been created you can copy it and use the shell scripts provided to run your application.
 
 
 
