@@ -44,8 +44,8 @@ Plugin to load and run batch (non-webapp/webless) Grails application.
 '''
 
     // URL to the plugin's documentation
-//def documentation = "http://grails.org/plugin/batch-launcher"
-    def documentation = "https://code.google.com/p/grails-batch-launcher-plugin"
+    def documentation = "http://grails.org/plugin/batch-launcher"
+    //def documentation = "https://code.google.com/p/grails-batch-launcher-plugin"
 
     def doWithWebDescriptor = { xml ->
         // TODO Implement additions to web.xml (optional), this event occurs before 
