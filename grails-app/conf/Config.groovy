@@ -23,6 +23,17 @@ log4j = {
     warn   'org.mortbay.log'
 }
 
+grails.doc.authors='Daniel Henrique Alves Lima (text revised by contributors)'
+grails.doc.license='Apache License 2.0'
+
+grails.doc.alias = [
+  intro: "1. Introduction",
+  quickStart: "1.1 Quick Start",
+  bootstrapClasses: "2. Bootstrap Classes",
+  logging: "3. Logging"
+]
+
+
 println "Hello world!"
 
 /*Thread t = new Thread() {

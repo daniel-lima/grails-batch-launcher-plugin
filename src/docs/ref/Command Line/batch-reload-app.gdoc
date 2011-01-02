@@ -1,0 +1,19 @@
+h1. batch-reload-app
+
+h2. Purpose
+
+Reloads Grails application without killing the JVM started by a @batch-run-app@ command. Should be used from a another command line.
+
+h2. Example
+
+{code}
+grails batch-reload-app
+{code}
+
+h2. Description
+
+Usage:
+{code}
+grails batch-reload-app
+{code}
+

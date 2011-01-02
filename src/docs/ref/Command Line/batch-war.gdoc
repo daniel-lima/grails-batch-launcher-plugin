@@ -1,0 +1,39 @@
+h1. batch-war
+
+h2. Purpose
+
+The @batch-war@ command will package your application to be "deployable"
+
+h2. Examples
+
+{code:java}
+grails batch-war
+grails test batch-war
+grails -Dgrails.env=foo batch-war
+{code}
+
+h2. Description
+
+Usage:
+{code:java}
+grails [environment]* batch-war [arguments]*
+{code}
+
+The @batch-war@ command will create a directory structure using the application name and version number. By default a deployable application to the production environment will be created, but the environment can be specified using Grails standard convention:
+
+{code:java}
+grails test batch-war
+grails dev batch-war
+grails prod batch-war
+{code}
+
+You can also specify a custom environment:
+
+{code:java}
+grails -Dgrails.env=UAT batch-war
+{code}
+
+Once the directory structure has been created you can copy it and use the shell scripts (.bat or .sh) provided to run your application
+
+
+

@@ -1,0 +1,35 @@
+Create your Grails application
+
+{code}
+grails create-app test-batch-prj
+cd test-batch-prj
+{code}
+
+Install the plugin
+
+{code}
+grails install-plugin batch-launcher
+{code}
+
+Add "hello world" to your grails-app/conf/Bootstrap.groovy
+
+{code}
+   def init = { servletContext ->
+     println "Hello world!"
+     println "App args are ${servletContext.args}" 
+   }
+{code}
+
+Go ahead and run your application
+
+{code}
+grails batch-run-app
+{code}
+
+Package your application to deployment
+
+{code}
+grails batch-war
+{code}
+
+Done!

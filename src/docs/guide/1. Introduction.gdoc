@@ -1,0 +1,10 @@
+This plugin enables the creation of Grails applications that will run without (outside of) a servlet/webapp container or a J(2)EE Application Server.
+It allows:
+* To start long running Grails (batch) processes;
+* To embed Grails in any regular Java application, container or server.
+
+The created application can use all non-servlet specific parts of a Grails application, like:
+* GORM/Hibernate support;
+* Depedency Injection throw Spring Framework;
+* Transactional service layer;
+* Grails Plugins (provided that the plugin does not depend of a servlet container or webapp environment to run - For example, quartz plugin).

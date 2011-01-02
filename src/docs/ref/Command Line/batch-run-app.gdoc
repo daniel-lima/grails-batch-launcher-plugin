@@ -1,0 +1,24 @@
+h1. batch-run-app
+
+h2. Purpose
+
+Runs Grails application
+
+h2. Example
+
+{code}
+grails batch-run-app
+{code}
+
+h2. Description
+
+Usage:
+{code}
+grails [env]* batch-run-app
+{code}
+
+Supported system properties:
+
+* @disable.auto.recompile@ - Disables auto-recompilation of Java sources, which can be processor intensive (defaults to false)
+* @recompile.frequency@ - Specifies how frequently (in seconds) Grails checks for changes to Java and Groovy sources in your project (defaults to 3).
+
