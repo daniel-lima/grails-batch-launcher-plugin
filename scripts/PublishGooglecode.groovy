@@ -1,8 +1,8 @@
 includeTargets << grailsScript("_GrailsDocs")
 
 def docBranch = "doc"
-//def docChildren = [~/manual/]
-def docChildren = [~/.*/]
+def docChildren = [~/manual/]
+//def docChildren = [~/.*/]
 def svnAutoProps = [
   '.html': ['svn:mime-type': 'text/html']
 ]
@@ -58,9 +58,7 @@ target(default: "Generates the plugin documentation and makes it available on yo
   
   out = new StringBuilder()
   def exitValue = executeSvn("checkout ${info.docURL} ${tmpDocDir}", out)
-  //tmpDocDir = new File("/tmp/docs8469994558139895917tmp")
-  //def exitValue = 0
-  echo "${exitValue} ${exitValue.class}"
+  //echo "${exitValue} ${exitValue.class}"
   if (exitValue > 0) {
     println "To create ${docBranch} branch, type 'svn mkdir ${info.docURL}'"
     exit exitValue
@@ -100,6 +98,7 @@ target(default: "Generates the plugin documentation and makes it available on yo
       }
   }
 
+  /* Build difference sets. */
   docsDir.eachFile {
     child ->
       docChildren.each {
@@ -147,6 +146,7 @@ target(default: "Generates the plugin documentation and makes it available on yo
   //println "removed files ${removedFilePaths}"
   //println "added files ${addedFilePaths}"
 
+  /* Copy the modified files to the new location. */
   subDirs.each {
     subDir ->
       ant.copy(todir: tmpDocDir) {
@@ -157,6 +157,7 @@ target(default: "Generates the plugin documentation and makes it available on yo
       }
   }
 
+  /* "Persist" changes to SVN. */
   println "Removing files from ${tmpDocDir.absolutePath}"
   removedFilePaths.each {
     removedPath ->
@@ -184,11 +185,15 @@ target(default: "Generates the plugin documentation and makes it available on yo
 	      executeSvn([dir: tmpDocDir.absolutePath, cmd: ["propset", entry.key, entry.value, addedPath]])
 	  }
 	}
-	
       }
   }  
 
-
+  // If the user wants to, also commit and push the changes.
+  if (argsMap["commit"] || argsMap["push"]) {
+    def out = executeSvn(["commit", "-m", "Auto-publication of plugin docs."])
+    println out
+  }
+  
 }
 
 

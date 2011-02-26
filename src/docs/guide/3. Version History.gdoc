@@ -1,0 +1,3 @@
+* 0.4.3
+** Required version of Grails was reduced from 1.3.3 to 1.2.5
+** Added 'batch-clean' command (BatchClean.groovy script)
