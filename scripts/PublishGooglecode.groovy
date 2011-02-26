@@ -226,31 +226,6 @@ def executeSvn(args, Appendable pOut = null) {
     }
   }
   
-  /*ant.exec(dir: baseDir?baseDir : '.', executable: 'svn', resultproperty: 'svnResult', outputproperty: 'svnOutput', errorproperty: 'svnError') {
-    if (cmd instanceof List) {
-      cmd.each {
-	arg(value: it)
-      }
-    } else {
-      arg(line: cmdArgs)
-    }
-  }
-
-  def out
-  if (pOut) {
-    pOut.append(ant.project.getProperty('svnOutput'))
-  } else {
-    out = ant.project.getProperty('svnOutput')
-  }
-  def error = ant.project.getProperty('svnError')
-  def exitValue = ant.project.getProperty('svnResult') as int
-
-  if (exitValue != 0) {
-    println error.toString()
-    if (!pOut) {
-      exit(exitValue)
-    }
-  }*/
   
   if (pOut != null) {
     return exitValue
