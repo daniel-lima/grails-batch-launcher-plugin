@@ -141,14 +141,6 @@ target(default: "Generates the plugin documentation and makes it available on yo
       return c
   }
 
-  //println "newFilePaths ${newFilePaths}"
-  //println "oldFilePaths ${oldFilePaths}"
-
-  /*def removedFilePaths = new HashSet(oldFilePaths)
-  removedFilePaths.removeAll(newFilePaths)
-
-  def addedFilePaths = new HashSet(newFilePaths)
-  addedFilePaths.removeAll(oldFilePaths)*/
   def removedFilePaths = removeAllPreservingOrder(oldFilePaths, newFilePaths)
   def addedFilePaths = removeAllPreservingOrder(newFilePaths, oldFilePaths)
 
@@ -196,37 +188,6 @@ target(default: "Generates the plugin documentation and makes it available on yo
       }
   }  
 
-  /*
-  docsDir.eachFile {
-    child ->
-      docChildren.each {
-	pattern ->
-	  if (pattern.matcher(child.name).matches()) {
-	    println "Copying ${child.name} to ${tmpDocDir}"
-	    def f = new File(child.name, tmpDocDir)
-	    ant.copy(todir: tmpDocDir) {
-	      fileset(dir: docsDir.absolutePath) {
-		include name: child.isDirectory()? "${child.name}/**" : child.name
-	      }
-	    }
-	  }
-      }
-  }
-  
-  tmpDocDir.eachFileRecurse {
-    file ->
-      def relativePath = file.absolutePath.substring(tmpDocDir.absolutePath.length() + 1)
-
-      if (!relativePath.startsWith(".svn")) {
-	def oldFile = new File(relativePath, docsDir)
-	if (!oldFile.exists()) {
-	  def out = executeSvn([dir:tmpDocDir.absolutePath, cmd: "remove ${relativePath}"])
-	  println out
-	}
-      }
-  }
-  
-*/
 
 }
 
@@ -260,8 +221,6 @@ def executeSvn(args, Appendable pOut = null) {
       exit(exitValue)
     }
   }
-  
-  //println "pOut = ${pOut}"
   
   if (pOut != null) {
     return exitValue

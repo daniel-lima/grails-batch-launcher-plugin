@@ -58,13 +58,7 @@ target(_batchRunApp: "") {
       }
     } as Runnable
     
-    recompileThread = new Thread(exec, "RecompileThread-" + (Thread.activeCount() + 1)) {
-      public void start() {
-	setDaemon(true)
-	super.start()
-      }
-    }
-    
+    recompileThread = newDaemonThread(exec, "RecompileThread-" + (Thread.activeCount() + 1))
     recompileThread.start()
   }
   
@@ -85,13 +79,7 @@ target(_batchRunApp: "") {
       }
     } as Runnable
     
-    killThread = new Thread(exec, "KillThread-" + (Thread.activeCount() + 1)) {
-      public void start() {
-	setDaemon(true)
-	super.start()
-      }
-    }
-    
+    killThread = newDaemonThread(exec, "KillThread-" + (Thread.activeCount() + 1))
     killThread.start()
   }
 
@@ -126,12 +114,7 @@ _batchRun = {
     } as Runnable
 
     
-    batchThread = new Thread(exec) {
-      public void start() {
-	setDaemon(true)
-	super.start()
-      }
-    }
+    batchThread = newDaemonThread(exec)
 
     if (myProps.autoReload && myProps.infiniteLoop && !newSecurityManager) {
       oldSecurityManager = System.getSecurityManager()
@@ -206,9 +189,16 @@ _preBatchRun = {
     def sourceDirs = [new java.io.File("").toURI().toURL()]
     resolveResources("file:${basedir}/grails-app/*").each {sourceDirs << it.file.toURI().toURL()}
     
-    def classesDirs = [
-      classesDir,
-      pluginClassesDir].collect { it.toURI().toURL() }
+    def classesDirs = [classesDir]
+    try {
+      classesDirs << pluginClassesDir
+    } catch (MissingPropertyException e) {
+      // Grails 1.2.5
+      if (e.property != "pluginClassesDir") {
+	throw e
+      }
+    }
+    classesDirs = classesDirs.collect { it.toURI().toURL() }
 
     classLoader = null
     if (useGroovyClassLoader) {
@@ -315,7 +305,13 @@ target(_batchAutoRecompile: "") {
     }
     
     classLoader.addURL(grailsSettings.classesDir.toURI().toURL())
-    classLoader.addURL(grailsSettings.pluginClassesDir.toURI().toURL())
+    try {
+      classLoader.addURL(grailsSettings.pluginClassesDir.toURI().toURL())
+    } catch (MissingPropertyException e) {
+      if (e.property != "pluginClassesDir") {
+	throw e
+      }
+    }
     
     // If this is a plugin project, the descriptor is not included
     // in the compiler's source path. So, we manually compile it now.
@@ -324,3 +320,9 @@ target(_batchAutoRecompile: "") {
 }
 
 
+// Workaround for old Groovy parser
+def newDaemonThread(Runnable r, String name = null) {
+  Thread t = name != null? new Thread(r, name) : new Thread(r)
+  t.daemon = true
+  return t
+}

@@ -43,3 +43,6 @@ println "Hello world!"
     Thread.sleep(10000)
   }
   }.start()*/
+// The following properties have been added by the Upgrade process...
+grails.views.default.codec="none" // none, html, base64
+grails.views.gsp.encoding="UTF-8"
