@@ -202,17 +202,21 @@ def executeSvn(args, Appendable pOut = null) {
     cmd = args.cmd
   }
 
+  //def cmdArgs = cmd
   cmd = cmd instanceof List ? ["svn"] + cmd : "svn " + cmd
 
   if (debugCmd) {
     println "[${baseDir?baseDir:'.'}] ${cmd}"
   }
   
+
   def process = baseDir? cmd.execute(null, new File(baseDir)): cmd.execute()
   def error = new StringBuilder()
   def out = pOut? pOut: new StringBuilder()
-  process.waitForProcessOutput(out, error)
+  //process.waitForProcessOutput(out, error) Groovy 1.7.5+
   process.waitFor()
+  error.append(process.err.text)
+  out.append(process.in.text)
   
   def exitValue = process.exitValue()
   if (exitValue != 0) {
@@ -221,6 +225,32 @@ def executeSvn(args, Appendable pOut = null) {
       exit(exitValue)
     }
   }
+  
+  /*ant.exec(dir: baseDir?baseDir : '.', executable: 'svn', resultproperty: 'svnResult', outputproperty: 'svnOutput', errorproperty: 'svnError') {
+    if (cmd instanceof List) {
+      cmd.each {
+	arg(value: it)
+      }
+    } else {
+      arg(line: cmdArgs)
+    }
+  }
+
+  def out
+  if (pOut) {
+    pOut.append(ant.project.getProperty('svnOutput'))
+  } else {
+    out = ant.project.getProperty('svnOutput')
+  }
+  def error = ant.project.getProperty('svnError')
+  def exitValue = ant.project.getProperty('svnResult') as int
+
+  if (exitValue != 0) {
+    println error.toString()
+    if (!pOut) {
+      exit(exitValue)
+    }
+  }*/
   
   if (pOut != null) {
     return exitValue
