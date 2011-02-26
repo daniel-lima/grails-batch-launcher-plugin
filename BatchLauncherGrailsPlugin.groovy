@@ -30,6 +30,7 @@ class BatchLauncherGrailsPlugin {
       "grails-app/views/**/*",
       "grails-app/taglibs/**/*",
       "grails-app/controllers/**/*",
+      "scripts/PublishGooglecode.groovy",
       "web-app/css/**/*",
       "web-app/images/**/*",
       "web-app/js/**/*"
