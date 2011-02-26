@@ -188,6 +188,8 @@ target(default: "Generates the plugin documentation and makes it available on yo
       }
   }  
 
+  println "argsMap ${argsMap}"
+
   // If the user wants to, also commit and push the changes.
   if (argsMap["commit"] || argsMap["push"]) {
     def out = executeSvn(["commit", "-m", "Auto-publication of plugin docs."])
