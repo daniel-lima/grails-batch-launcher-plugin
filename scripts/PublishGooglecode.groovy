@@ -149,7 +149,7 @@ target(default: "Generates the plugin documentation and makes it available on yo
   /* Copy the modified files to the new location. */
   subDirs.each {
     subDir ->
-      ant.copy(todir: tmpDocDir) {
+      ant.copy(todir: tmpDocDir, overwrite: true) {
 	fileset(dir: docsDir.absolutePath) {
 	  def subDirName = getRelativePath(docsDir, subDir)
 	  include name: subDir.isDirectory()? "${subDirName}/**" : subDirName
@@ -174,10 +174,12 @@ target(default: "Generates the plugin documentation and makes it available on yo
       if (file.isFile() && svnAutoProps) {
 	def ext = file.name.tokenize('.')
 	if (ext && ext.size() > 1) {
-	  ext = '.' + ext[1].toLowerCase()
+	  ext = '.' + ext[ext.size()-1].toLowerCase()
 	} else {
 	  ext = null
 	}
+
+	//println "ext: ${ext} - ${file}"
 
 	if (ext && svnAutoProps[ext]) {
 	  svnAutoProps[ext].entrySet().each {
@@ -188,11 +190,11 @@ target(default: "Generates the plugin documentation and makes it available on yo
       }
   }  
 
-  println "argsMap ${argsMap}"
+  //println "argsMap ${argsMap}"
 
   // If the user wants to, also commit and push the changes.
   if (argsMap["commit"] || argsMap["push"]) {
-    def out = executeSvn(["commit", "-m", "Auto-publication of plugin docs."])
+    def out = executeSvn([dir:tmpDocDir.absolutePath, cmd: ["commit", "-m", "Auto-publication of plugin docs."]])
     println out
   }
   
