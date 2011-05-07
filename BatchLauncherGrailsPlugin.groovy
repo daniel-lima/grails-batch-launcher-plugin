@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 the original author or authors.
+ * Copyright 2010-2011 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
  */
 class BatchLauncherGrailsPlugin {
     // the plugin version
-    def version = "0.4.3"
+    def version = "0.4.4"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.2.5 > *"
     // the other plugins this plugin depends on
@@ -30,10 +30,13 @@ class BatchLauncherGrailsPlugin {
       "grails-app/views/**/*",
       "grails-app/taglibs/**/*",
       "grails-app/controllers/**/*",
+      "grails-app/utils/**/*",
       "scripts/PublishGooglecode.groovy",
+      "scripts/Eclipse.groovy",
       "web-app/css/**/*",
       "web-app/images/**/*",
-      "web-app/js/**/*"
+      "web-app/js/**/*",
+      "web-app/WEB-INF/tld/**/*"
     ]
 
     // TODO Fill in these fields
