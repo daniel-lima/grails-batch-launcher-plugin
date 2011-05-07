@@ -21,7 +21,7 @@ import org.codehaus.groovy.grails.plugins.logging.Log4jConfig
 import org.apache.log4j.LogManager
 
 if (binding.variables.containsKey("_grails_batch_init_package_called")) {
-  return
+    return
 }
 
 _grails_batch_init_package_called = true
@@ -41,7 +41,7 @@ props.reloadFilename = ".batch_reload"
 props.bootstrapJarExploded = "true".equals(System.getProperty("batch.bootstrap.jar.exploded", "false"))? true: false
 
 target(_batchStartLogging: "Bootstrap logging") {
-  /*
+    /*
   LogManager.resetConfiguration()
   if (config.log4j instanceof Closure) {
     profile("configuring log4j") {
