@@ -62,14 +62,15 @@ target(_batchRunApp: "") {
     recompileThread.start()
   }
   
-  if (autoReload && (!killThread || !killThread.isAlive())) {
+  long sleepTime = (autoReload? autoReloadFrequency : autoRecompileFrequency) * 1000
+  if (!killThread || !killThread.isAlive()) {
     def exec = {
       def ant = new AntBuilder(ant.project)  // To avoid concurrent access to AntBuilder
-      def touchFile = _createReloadFile(props)
+      def touchFile = autoReload? new File(grailsSettings.classesDir.path) : _createReloadFile(props)
       long lastModified = touchFile.lastModified()
       
       while (true) {
-	Thread.sleep(autoReloadFrequency * 1000)
+	Thread.sleep(sleepTime)
 	long lastModified2 = touchFile.lastModified()
 	if (lastModified2 > lastModified) {
 	  lastModified = lastModified2
@@ -91,11 +92,10 @@ target(_batchRunApp: "") {
       break;
     }
 
-    if (props.autoReload) {
-      ant.echo("App finished. Waiting for 'reload' command")
-      while (!batchReload) {
-	Thread.sleep(props.autoReloadFrequency)
-      }
+    
+    ant.echo('App finished. ' + (autoReload?'':"Waiting for 'reload' command"))
+    while (!batchReload) {
+	Thread.sleep(sleepTime)
     }
   }
 }
