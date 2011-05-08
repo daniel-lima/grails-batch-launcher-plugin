@@ -17,10 +17,8 @@
 /**
  * @author Daniel Henrique Alves Lima
  */
-import org.codehaus.groovy.grails.cli.GrailsScriptRunner
 import org.codehaus.groovy.grails.plugins.PluginManagerHolder
 import org.codehaus.groovy.tools.shell.util.NoExitSecurityManager
-
 
 if (binding.variables.containsKey("_grails_batch_run_package_called")) {
     return
@@ -48,7 +46,6 @@ target(_batchRunApp: "") {
     def autoRecompileFrequency = props.autoRecompileFrequency
     def autoReload = props.autoReload
     def autoReloadFrequency = props.autoReloadFrequency
-    def isInteractive = props.interactive
     ant.echo("autoRecompile ${autoRecompile}")
     ant.echo("autoReload ${autoReload}")
 
@@ -87,55 +84,7 @@ target(_batchRunApp: "") {
         killThread.start()
     }
 
-    
-    boolean keepRunning = true
-    if (isInteractive) {
-        def exec = {
-            Thread.sleep(5000)
-            def reader = new BufferedReader(new InputStreamReader(System.in))
-            def quitCommands = new HashSet(['exit', 'quit'])
-            def runCommands = new HashSet([
-                'run-app',
-                'run-war',
-                'batch-run-app'
-            ])
-            String nl = System.properties['line.separator']
-            String cmd = ''; String oldCmd = ''
-            while (true) {
-                print "${nl}--------------------------------------------------------${nl}\
-Application loaded in interactive mode, type 'exit' or 'quit' to shutdown.${nl}\
-Type a command name to continue or hit ENTER to run the last command (${oldCmd}):${nl}"
-                cmd = (cmd = reader.readLine())? cmd: oldCmd
-                oldCmd = cmd
-                if (quitCommands.contains(cmd)) {
-                    keepRunning = false
-                    batchReload = true
-                    _batchKill(props)
-                    break
-                }
-                if (!runCommands.contains(cmd)) {
-                    def scriptName = cmd? GrailsScriptRunner.processArgumentsAndReturnScriptName(cmd) : null
-                    if (scriptName) {
-                        println "scriptName ${scriptName}"
-                        def now = System.currentTimeMillis()
-                        GrailsScriptRunner.callPluginOrGrailsScript(scriptName)
-                        def end = System.currentTimeMillis()
-                        println "--------------------------------------------------------"
-                        println "Command [$scriptName] completed in ${end - now}ms"
-                    }
-                } else {
-                    println "Cannot run the '${cmd}' command. Application already running!"
-                }
-            }
-        } as Runnable
-
-        
-        newDaemonThread(exec).start()
-    }
-
-    
-    
-    while (keepRunning) {
+    while (true) {
         _preBatchRun(props)
         _batchRun(props)
         _postBatchRun(props)
