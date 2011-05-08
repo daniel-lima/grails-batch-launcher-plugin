@@ -35,10 +35,11 @@ props.autoRecompile = "false".equals(System.getProperty("disable.auto.recompile"
 props.autoRecompileFrequency = 3
 props.args = null
 props.infiniteLoop = true
-props.autoReload = "false".equals(System.getProperty("batch.disable.auto.reload", "true"))
+props.autoReload = "true".equals(System.getProperty("batch.auto.reload", "false"))
 props.autoReloadFrequency = 3
 props.reloadFilename = ".batch_reload"
-props.bootstrapJarExploded = "true".equals(System.getProperty("batch.bootstrap.jar.exploded", "false"))? true: false
+props.bootstrapJarExploded = "true".equals(System.getProperty("batch.bootstrap.jar.exploded", "false"))
+props.interactive = 'true'.equals(System.getProperty('grails.interactive.mode', 'false'))
 
 target(_batchStartLogging: "Bootstrap logging") {
     /*
