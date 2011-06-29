@@ -19,18 +19,14 @@
  */
 class BatchLauncherGrailsPlugin {
     // the plugin version
-    def version = "0.5.0"
+    def version = "0.5.1"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.2.5 > *"
     // the other plugins this plugin depends on
     def dependsOn = [:]
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
-      "grails-app/conf/**/Test*",
-      "grails-app/views/**/*",
-      "grails-app/taglibs/**/*",
-      "grails-app/controllers/**/*",
-      "grails-app/utils/**/*",
+      "grails-app/**/*",
       "scripts/PublishGooglecode.groovy",
       "scripts/Eclipse.groovy",
       "web-app/css/**/*",
