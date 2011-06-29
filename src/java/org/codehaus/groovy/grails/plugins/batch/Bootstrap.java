@@ -16,6 +16,11 @@
 package org.codehaus.groovy.grails.plugins.batch;
 
 import grails.util.Environment;
+import groovy.lang.Closure;
+
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -23,6 +28,7 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.groovy.grails.commons.AbstractGrailsClass;
 import org.codehaus.groovy.grails.commons.ApplicationHolder;
 import org.codehaus.groovy.grails.commons.BootstrapArtefactHandler;
 import org.codehaus.groovy.grails.commons.GrailsApplication;
@@ -101,6 +107,22 @@ public class Bootstrap {
 
         logDebug("init(): thread classLoader ", Thread.currentThread()
                 .getContextClassLoader());
+
+        DefaultLauncherClass launcher = getLauncherClass();
+        logDebug("init(): launcher ", launcher);
+
+        if (launcher != null) {
+            Map<String, Object> context = new LinkedHashMap<String, Object>();
+            for (@SuppressWarnings("rawtypes")
+            Enumeration e = servletContext.getAttributeNames(); e
+                    .hasMoreElements();) {
+                String key = (String) e.nextElement();
+                Object value = servletContext.getAttribute(key);
+                context.put(key, value);
+            }
+            launcher.callRun(context);
+        }
+
         logDebug("init(): end");
     }
 
@@ -136,6 +158,20 @@ public class Bootstrap {
         servletContext = null;
 
         logDebug(true, "destroy(): end");
+    }
+
+    private DefaultLauncherClass getLauncherClass() {
+        GrailsApplication grailsApplication = ApplicationHolder
+                .getApplication();
+
+        Class<?> launcherClass = grailsApplication.getClassForName("Launcher");
+        DefaultLauncherClass grailsLauncherClass = null;
+
+        if (launcherClass != null) {
+            grailsLauncherClass = new DefaultLauncherClass(launcherClass);
+        }
+
+        return grailsLauncherClass;
     }
 
     private static String getSystemProperty(String propertyName,
@@ -189,4 +225,36 @@ public class Bootstrap {
             }
         }
     }
+}
+
+class DefaultLauncherClass extends AbstractGrailsClass {
+
+    public DefaultLauncherClass(Class<?> clazz) {
+        super(clazz, "Launcher");
+    }
+
+    @SuppressWarnings("serial")
+    private static Closure BLANK_CLOSURE = new Closure(Bootstrap.class) {
+        @Override
+        public Object call(Object[] args) {
+            return null;
+        }
+    };
+
+    public Closure getRunClosure() {
+        Object obj = getPropertyValueObject("run");
+        if (obj instanceof Closure) {
+            return (Closure) obj;
+        }
+        return BLANK_CLOSURE;
+    }
+
+    public void callRun(Map<String, Object> context) {
+        Closure init = getRunClosure();
+        if (init != null) {
+            init = init.curry(new Object[] { context });
+            Environment.executeForCurrentEnvironment(init);
+        }
+    }
+
 }
