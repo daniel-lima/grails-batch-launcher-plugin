@@ -34,9 +34,12 @@ import org.codehaus.groovy.grails.commons.BootstrapArtefactHandler;
 import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.codehaus.groovy.grails.commons.GrailsBootstrapClass;
 import org.codehaus.groovy.grails.commons.GrailsClass;
+import org.codehaus.groovy.grails.support.PersistenceContextInterceptor;
 import org.codehaus.groovy.grails.web.context.GrailsContextLoaderListener;
 import org.codehaus.groovy.grails.web.util.Log4jConfigListener;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * @author Daniel Henrique Alves Lima
@@ -108,22 +111,61 @@ public class Bootstrap {
         logDebug("init(): thread classLoader ", Thread.currentThread()
                 .getContextClassLoader());
 
-        DefaultLauncherClass launcher = getLauncherClass();
+        GrailsApplication application = ApplicationHolder.getApplication();
+        DefaultLauncherClass launcher = getLauncherClass(application);
         logDebug("init(): launcher ", launcher);
 
         if (launcher != null) {
-            Map<String, Object> context = new LinkedHashMap<String, Object>();
-            for (@SuppressWarnings("rawtypes")
-            Enumeration e = servletContext.getAttributeNames(); e
-                    .hasMoreElements();) {
-                String key = (String) e.nextElement();
-                Object value = servletContext.getAttribute(key);
-                context.put(key, value);
-            }
-            launcher.callRun(context);
+            executeLauncher(application, launcher);
+
         }
 
         logDebug("init(): end");
+    }
+
+    private void executeLauncher(GrailsApplication application,
+            DefaultLauncherClass launcher) {
+        Map<String, Object> context = new LinkedHashMap<String, Object>();
+        for (@SuppressWarnings("rawtypes")
+        Enumeration e = servletContext.getAttributeNames(); e
+                .hasMoreElements();) {
+            String key = (String) e.nextElement();
+            Object value = servletContext.getAttribute(key);
+            context.put(key, value);
+        }
+
+        WebApplicationContext webContext = (WebApplicationContext) application
+                .getMainContext();
+
+        PersistenceContextInterceptor interceptor = null;
+        String[] beanNames = webContext
+                .getBeanNamesForType(PersistenceContextInterceptor.class);
+        if (beanNames.length > 0) {
+            interceptor = (PersistenceContextInterceptor) webContext
+                    .getBean(beanNames[0]);
+        }
+
+        if (interceptor != null) {
+            interceptor.init();
+        }
+
+        try {
+
+            final Object instance = launcher.getReferenceInstance();
+            webContext.getAutowireCapableBeanFactory()
+                    .autowireBeanProperties(instance,
+                            AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
+                            false);
+            launcher.callRun(context);
+
+            if (interceptor != null) {
+                interceptor.flush();
+            }
+        } finally {
+            if (interceptor != null) {
+                interceptor.destroy();
+            }
+        }
     }
 
     public void destroy() {
@@ -160,10 +202,8 @@ public class Bootstrap {
         logDebug(true, "destroy(): end");
     }
 
-    private DefaultLauncherClass getLauncherClass() {
-        GrailsApplication grailsApplication = ApplicationHolder
-                .getApplication();
-
+    private DefaultLauncherClass getLauncherClass(
+            GrailsApplication grailsApplication) {
         Class<?> launcherClass = grailsApplication.getClassForName("Launcher");
         DefaultLauncherClass grailsLauncherClass = null;
 
