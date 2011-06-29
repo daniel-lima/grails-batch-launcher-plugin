@@ -1,2 +1,3 @@
+@echo off
 java -cp .;@classesDirName@;@bootstrapJarName@;@windowsLibClasspath@ -jar @bootstrapJarName@ %*
-exit %errorlevel%
+exit /b %errorlevel%
