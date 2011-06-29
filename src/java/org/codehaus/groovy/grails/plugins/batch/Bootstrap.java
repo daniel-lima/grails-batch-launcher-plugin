@@ -15,54 +15,37 @@
  */
 package org.codehaus.groovy.grails.plugins.batch;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletContextEvent;
-
-import org.codehaus.groovy.grails.web.context.GrailsConfigUtils;
-import org.codehaus.groovy.grails.commons.GrailsApplication;
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
-
-import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.access.BootstrapException;
-import org.springframework.web.context.support.XmlWebApplicationContext;
-
-import org.codehaus.groovy.grails.commons.GrailsBootstrapClass;
-import org.codehaus.groovy.grails.commons.GrailsClass;
-import org.codehaus.groovy.grails.commons.spring.GrailsApplicationContext;
-import org.codehaus.groovy.grails.commons.BootstrapArtefactHandler;
-import org.codehaus.groovy.grails.compiler.injection.GrailsAwareClassLoader;
-import org.codehaus.groovy.grails.web.util.Log4jConfigListener;
-import org.codehaus.groovy.grails.web.context.GrailsContextLoaderListener;
-import org.codehaus.groovy.grails.plugins.PluginManagerHolder;
-import org.codehaus.groovy.grails.plugins.GrailsPluginManager;
-import org.codehaus.groovy.grails.plugins.DefaultGrailsPluginManager;
-
-
-import grails.util.GrailsUtil;
 import grails.util.Environment;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.codehaus.groovy.grails.commons.ApplicationHolder;
+import org.codehaus.groovy.grails.commons.BootstrapArtefactHandler;
+import org.codehaus.groovy.grails.commons.GrailsApplication;
+import org.codehaus.groovy.grails.commons.GrailsBootstrapClass;
+import org.codehaus.groovy.grails.commons.GrailsClass;
+import org.codehaus.groovy.grails.web.context.GrailsContextLoaderListener;
+import org.codehaus.groovy.grails.web.util.Log4jConfigListener;
+import org.springframework.mock.web.MockServletContext;
 
-//import org.apache.log4j.Logger;
 
 /**
  * @author Daniel Henrique Alves Lima
  */
 public class Bootstrap {
 
+    private static final String PROPERTY_PREFIX = "grails.plugins.batch."; 
+    
     private final String className = getClass().getName();
     private final Log log = LogFactory.getLog(getClass());
-    //    public static final Logger LOGGER = Logger.getLogger(Bootstrap.class);
 
     private ServletContext servletContext;
     private ServletContextListener [] servletContextListeners;
 
-    private WebApplicationContext webContext;
 
     private final boolean logEnabled;
     
@@ -82,13 +65,7 @@ public class Bootstrap {
 
 	String resourcePath = getSystemProperty("resourcePath", null);
 	if (resourcePath == null) {
-	    switch(Environment.getCurrent()) {
-	    case PRODUCTION:
 		resourcePath = "war";
-		break;
-	    default:
-		resourcePath = "web-app";
-	    }
 	}
 	 
 	logDebug(true, "init(): resourcePath ", resourcePath);
@@ -124,38 +101,7 @@ public class Bootstrap {
 	}
 	
 
-	// No fixed context defined for this servlet - create a local one.
-	/*XmlWebApplicationContext parent = new XmlWebApplicationContext();
-	  parent.setServletContext(servletContext);
-	  //parent.setNamespace(getClass().getName() + ".CONTEXT.");
-	  parent.refresh();*/
-	/*WebApplicationContext parent = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
-	WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-	// construct the SpringConfig for the container managed application
-	//Assert.notNull(parent, "Grails requires a parent ApplicationContext, is the /WEB-INF/applicationContext.xml file missing?");
-	GrailsApplication application = parent.getBean(GrailsApplication.APPLICATION_ID, GrailsApplication.class);
-    
-	//WebApplicationContext webContext;
-	if (wac instanceof GrailsApplicationContext) {
-	    webContext = wac;
-	}
-	else {
-	    webContext = GrailsConfigUtils.configureWebApplicationContext(servletContext, parent);
-
-	    try {
-		GrailsConfigUtils.executeGrailsBootstraps(application, webContext, servletContext);
-	    }
-	    catch (Exception e) {
-		log.debug("init()", e);
-		GrailsUtil.deepSanitize(e);
-		if (e instanceof BeansException) {
-		    throw (BeansException)e;
-		}
-	
-		throw new BootstrapException("Error executing bootstraps", e);
-	    }
-	    }*/
 
 
 	logDebug("init(): thread classLoader ", Thread.currentThread().getContextClassLoader());
@@ -164,8 +110,6 @@ public class Bootstrap {
 
     public void destroy() {
 	logDebug("destroy(): begin");
-
-	//GrailsApplication grailsApplication = webContext.getBean(GrailsApplication.APPLICATION_ID, GrailsApplication.class);
     
 	GrailsApplication grailsApplication = ApplicationHolder.getApplication();
 
@@ -198,7 +142,7 @@ public class Bootstrap {
     }
 
     private static String getSystemProperty(String propertyName, String defaultValue) {
-	propertyName = "grails.plugins.batch." + propertyName;
+	propertyName = PROPERTY_PREFIX + propertyName;
 	String value = System.getProperty(propertyName);
 	if (value != null && value.length() <= 0) {
 	    value = null;

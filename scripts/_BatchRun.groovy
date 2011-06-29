@@ -17,6 +17,7 @@
 /**
  * @author Daniel Henrique Alves Lima
  */
+import grails.util.Environment
 import org.codehaus.groovy.grails.plugins.PluginManagerHolder
 import org.codehaus.groovy.tools.shell.util.NoExitSecurityManager
 
@@ -111,6 +112,20 @@ _batchRun = {myProps ->
 
         ant.echo("Loading ${myProps.bootstrapClassName}")
         Class c = classLoader.loadClass(myProps.bootstrapClassName)
+
+        /*String resourcePath = null
+
+        switch(Environment.getCurrent()) {
+            case Environment.PRODUCTION:
+                resourcePath = "war"
+                break
+            default:
+                resourcePath = "web-app"
+        }*/
+
+        String resourcePath = 'web-app'
+        System.setProperty("${c.PROPERTY_PREFIX}resourcePath", resourcePath)
+
         c.main(myProps.args as String[])
 
     } as Runnable
