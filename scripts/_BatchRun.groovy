@@ -94,10 +94,13 @@ target(_batchRunApp: "") {
 
     
         ant.echo('App finished. ' + (autoReload?'':"Waiting for 'reload' command"))
+        event('StatusUpdate', ['Application finished'])
         while (!batchReload) {
             Thread.sleep(sleepTime)
         }
     }
+    
+    event('StatusFinal', ['Server stopped'])
 }
 
 
@@ -242,6 +245,7 @@ _createReloadFile = {myProps ->
 target(_batchReloadApp: "") {
     def file = _createReloadFile(props)
     file.setLastModified(System.currentTimeMillis())
+    event('StatusFinal', ['Application will be reloaded'])
 }
 
 
@@ -277,6 +281,7 @@ target(_batchAutoRecompile: "") {
             String classpathId = "grails.compile.classpath"
 
             /* To avoid continuous resources.groovy recompilation. */
+            //event('CompileStart')
             ant.groovyc(destdir:classesDirPath,
                         classpathref:classpathId,
                         encoding:"UTF-8",
@@ -294,8 +299,11 @@ target(_batchAutoRecompile: "") {
                        ) {
                 src(path: "${basedir}/grails-app/conf/spring")
             }
+                       
+            //event('CompileEnd')
         }
         catch (Exception e) {
+            event('StatusError', ["Compilation error: ${e.message}"])
             e.printStackTrace()
         }
     

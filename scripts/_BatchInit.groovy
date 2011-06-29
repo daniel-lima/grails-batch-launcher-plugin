@@ -39,6 +39,9 @@ props.autoReload = "true".equals(System.getProperty("batch.auto.reload", "false"
 props.autoReloadFrequency = 3
 props.reloadFilename = ".batch_reload"
 props.bootstrapJarExploded = "true".equals(System.getProperty("batch.bootstrap.jar.exploded", "false"))
+props.eventsToSuppress = new LinkedHashSet()
+
+includeTargets << grailsScript("_GrailsEvents")
 
 target(_batchStartLogging: "Bootstrap logging") {
     /*
@@ -51,5 +54,15 @@ target(_batchStartLogging: "Bootstrap logging") {
   else {
     // setup default logging
     new Log4jConfig().configure()
+    }*/
+}
+
+/* Overwrite _GrailsEvents.groovy closure. */
+event = {String name, args ->
+    //println "event ${name} ${args}"
+    if (!props.eventsToSuppress.contains(name)) {
+        eventListener.triggerEvent(name, * args)
+    } /*else {
+        println "supressing..."
     }*/
 }

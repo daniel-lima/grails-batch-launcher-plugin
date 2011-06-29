@@ -32,8 +32,13 @@ includeTargets << grailsScript("_GrailsWar")
 def props = binding.batch
 
 target(_batchWar: "") {
+    def events = ['StatusFinal', 'CreateWarEnd']
+    props.eventsToSuppress.addAll(events)
+    
   war()
-
+  
+  props.eventsToSuppress.removeAll(events)
+  
   def warDir = new File(warName.replace(".war", "/war"))
   def batchDir = warDir.parentFile
   def appName = grailsAppName
@@ -45,6 +50,8 @@ target(_batchWar: "") {
   }
 
   ant.mkdir(dir: batchDir.absolutePath)
+  
+  event('ReorganizeWarStart', [warDir.canonicalPath])
 
   def libDirName = "war/WEB-INF/lib"
   def classesDirName = "war/WEB-INF/classes"
@@ -127,5 +134,9 @@ target(_batchWar: "") {
     }
   }
 
+  event('ReorganizeWarEnd', [warDir.canonicalPath])
+  event('CreateWarEnd', [warName, stagingDir])
+  event('StatusFinal', ["Done creating Reorganized WAR at ${warDir.canonicalPath}"])
+  
 
 }
