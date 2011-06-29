@@ -1,3 +1,4 @@
 #!/bin/sh
-java -cp .:@classesDirName@:@bootstrapJarName@:@linuxLibClasspath@ -jar @bootstrapJarName@ $*
-exit $?
+java -jar @bootstrapJarName@ $*
+#java -cp .:@classesDirName@:@bootstrapJarName@:@linuxLibClasspath@ -jar @bootstrapJarName@ $*
+#exit $?

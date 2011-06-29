@@ -123,9 +123,10 @@ _batchRun = {myProps ->
                 resourcePath = "web-app"
         }*/
 
-        String resourcePath = 'web-app'
-        System.setProperty("${c.PROPERTY_PREFIX}resourcePath", resourcePath)
-
+        String propertyName = "${c.PROPERTY_PREFIX}resourcePath"
+        System.setProperty("${propertyName}", 'web-app')
+        ant.echo("${propertyName}=${System.properties[propertyName]}")
+        
         c.main(myProps.args as String[])
 
     } as Runnable

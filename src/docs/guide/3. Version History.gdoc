@@ -4,3 +4,8 @@
 
 * 0.5.1
 ** Initial support for scripting events
+
+* 0.5.3
+** BootStrap class usage replaced by Launcher class usage
+** Directory selection corrected for 'grails prod batch-run-app' and 'grails dev batch-war'
+** Modified launcher scripts (.sh and .bat)

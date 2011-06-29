@@ -11,12 +11,12 @@ Install the plugin
 grails install-plugin batch-launcher
 {code}
 
-Add "hello world" to your grails-app/conf/Bootstrap.groovy
+If you want, add "hello world" to your grails-app/conf/Launcher.groovy
 
 {code}
-   def init = { servletContext ->
+   def run = { context ->
      println "Hello world!"
-     println "App args are ${servletContext.args}" 
+     println "App args are ${context.args}" 
    }
 {code}
 
@@ -26,7 +26,7 @@ Go ahead and run your application
 grails batch-run-app
 {code}
 
-Package your application to deployment
+Prepare your application to deployment
 
 {code}
 grails batch-war
