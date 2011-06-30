@@ -89,7 +89,7 @@ target(_batchWar: "") {
     ant.jar(destfile: batchDir.absolutePath + "/" + bootstrapJarName, baseDir: warDir.absolutePath + "/WEB-INF/classes") {
       manifest {
 	attribute(name: "Class-Path", value: manifestClasspath)
-	attribute(name: "Main-Class", value: props.bootstrapClassName)
+	attribute(name: "Main-Class", value: props.launcherClassName)
       }
     }
 
@@ -103,7 +103,7 @@ target(_batchWar: "") {
 
 
   if (templatesSourceDir.exists()) {
-    def filterTokens = [appName: appName, appVersion: appVersion, bootstrapJarName: bootstrapJarName, bootstrapClassName: props.bootstrapClassName, libDirName: libDirName, classesDirName: classesDirName, windowsLibClasspath: windowsLibClasspath, linuxLibClasspath: linuxLibClasspath]
+    def filterTokens = [appName: appName, appVersion: appVersion, bootstrapJarName: bootstrapJarName, launcherClassName: props.launcherClassName, libDirName: libDirName, classesDirName: classesDirName, windowsLibClasspath: windowsLibClasspath, linuxLibClasspath: linuxLibClasspath]
     
     ant.copy(todir: batchDir.absolutePath, filtering: true) {
       fileset(dir: templatesSourceDir.absolutePath) {

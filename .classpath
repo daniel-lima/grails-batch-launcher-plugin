@@ -96,7 +96,7 @@
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-web-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-resources-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-gorm-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
-	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-core-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
+	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-core-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src/java"/>
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-osgi-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-bootstrap-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-docs-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>

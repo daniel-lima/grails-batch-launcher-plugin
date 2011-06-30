@@ -11,7 +11,7 @@ Install the plugin
 grails install-plugin batch-launcher
 {code}
 
-If you want, add "hello world" to your grails-app/conf/Launcher.groovy
+If you want, add "hello world" to your grails-app/conf/Main.groovy
 
 {code}
    def run = { context ->

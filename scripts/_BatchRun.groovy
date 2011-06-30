@@ -110,8 +110,8 @@ _batchRun = {myProps ->
 
     def exec = {
 
-        ant.echo("Loading ${myProps.bootstrapClassName}")
-        Class c = classLoader.loadClass(myProps.bootstrapClassName)
+        ant.echo("Loading ${myProps.launcherClassName}")
+        Class c = classLoader.loadClass(myProps.launcherClassName)
 
         /*String resourcePath = null
 
