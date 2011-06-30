@@ -55,6 +55,10 @@ public class Bootstrap {
     private final boolean logEnabled;
 
     private Thread shutdownHook;
+    private boolean destroyed;
+
+    private final String initLock = "init";
+    private final String destroyLock = "destroy";
 
     public Bootstrap() {
         logEnabled = "true"
@@ -63,70 +67,122 @@ public class Bootstrap {
 
     public void init(String[] args) {
         logDebug(true, "init(): begin");
+        synchronized (initLock) {
 
-        logDebug(true, "init(): this classLoader ", this.getClass()
-                .getClassLoader());
-        logDebug(true, "init(): thread classLoader ", Thread.currentThread()
-                .getContextClassLoader());
+            logDebug(true, "init(): this classLoader ", this.getClass()
+                    .getClassLoader());
+            logDebug(true, "init(): thread classLoader ", Thread
+                    .currentThread().getContextClassLoader());
 
-        logDebug(true, "init(): env ", Environment.getCurrent());
+            logDebug(true, "init(): env ", Environment.getCurrent());
 
-        String resourcePath = getSystemProperty("resourcePath", null);
-        if (resourcePath == null) {
-            resourcePath = "war";
-        }
-
-        logDebug(true, "init(): resourcePath ", resourcePath);
-
-        servletContext = resourcePath != null ? new MockServletContext(
-                resourcePath) : new MockServletContext();
-        servletContext.setAttribute("args", args);
-
-        servletContextListeners = new ServletContextListener[] {
-                new Log4jConfigListener(), new GrailsContextLoaderListener() };
-
-        this.shutdownHook = new Thread() {
-
-            public void run() {
-                logDebug(true, "shutdown hook run():");
-                Bootstrap.this.destroy();
+            String resourcePath = getSystemProperty("resourcePath", null);
+            if (resourcePath == null) {
+                resourcePath = "war";
             }
-        };
 
-        Runtime.getRuntime().addShutdownHook(this.shutdownHook);
-        logDebug(true, "init(): shutdown hook added");
+            logDebug(true, "init(): resourcePath ", resourcePath);
 
-        try {
-            ServletContextEvent event = new ServletContextEvent(servletContext);
-            for (ServletContextListener l : servletContextListeners) {
-                l.contextInitialized(event);
+            servletContext = resourcePath != null ? new MockServletContext(
+                    resourcePath) : new MockServletContext();
+            servletContext.setAttribute("args", args);
+
+            servletContextListeners = new ServletContextListener[] {
+                    new Log4jConfigListener(),
+                    new GrailsContextLoaderListener() };
+
+            this.shutdownHook = new Thread() {
+
+                public void run() {
+                    logDebug(true, "shutdown hook run():");
+                    Bootstrap.this.destroy();
+                }
+            };
+
+            this.destroyed = false;
+
+            Runtime.getRuntime().addShutdownHook(this.shutdownHook);
+            logDebug(true, "init(): shutdown hook added");
+
+            try {
+                ServletContextEvent event = new ServletContextEvent(
+                        servletContext);
+                for (ServletContextListener l : servletContextListeners) {
+                    l.contextInitialized(event);
+                }
+            } catch (RuntimeException e) {
+                log.error("init()", e);
+                throw e;
             }
-        } catch (RuntimeException e) {
-            log.error("init()", e);
-            throw e;
-        }
 
-        logDebug("init(): thread classLoader ", Thread.currentThread()
-                .getContextClassLoader());
+            logDebug("init(): thread classLoader ", Thread.currentThread()
+                    .getContextClassLoader());
+
+            logDebug("init(): end");
+        }
+    }
+
+    public void run() {
+        logDebug(true, "run(): begin");
 
         GrailsApplication application = ApplicationHolder.getApplication();
         DefaultGrailsLauncherClass launcher = getLauncherClass(application);
-        logDebug("init(): launcher ", launcher);
+        logDebug("run(): launcher ", launcher);
 
         if (launcher != null) {
             executeLauncher(application, launcher);
 
         }
 
-        logDebug("init(): end");
+        logDebug(true, "run(): end");
+    }
+
+    public void destroy() {
+        logDebug("destroy(): begin");
+        synchronized (destroyLock) {
+
+            if (!this.destroyed) {
+                GrailsApplication grailsApplication = ApplicationHolder
+                        .getApplication();
+
+                GrailsClass[] bootstraps = grailsApplication
+                        .getArtefacts(BootstrapArtefactHandler.TYPE);
+                for (int i = bootstraps.length - 1; i >= 0; i--) {
+                    GrailsClass bootstrap = bootstraps[i];
+                    ((GrailsBootstrapClass) bootstrap).callDestroy();
+                }
+
+                {
+                    ServletContextEvent event = new ServletContextEvent(
+                            servletContext);
+                    for (int i = servletContextListeners.length - 1; i >= 0; i--) {
+                        ServletContextListener l = servletContextListeners[i];
+                        l.contextDestroyed(event);
+                    }
+                }
+
+                if (shutdownHook != null) {
+                    if (!shutdownHook.isAlive()) {
+                        Runtime.getRuntime().removeShutdownHook(
+                                this.shutdownHook);
+                        logDebug(true, "destroy(): shutdown hook removed");
+                    }
+                    this.shutdownHook = null;
+                }
+
+                servletContext = null;
+            }
+
+            this.destroyed = true;
+            logDebug(true, "destroy(): end");
+        }
     }
 
     private void executeLauncher(GrailsApplication application,
             DefaultGrailsLauncherClass launcher) {
         Map<String, Object> context = new LinkedHashMap<String, Object>();
         for (@SuppressWarnings("rawtypes")
-        Enumeration e = servletContext.getAttributeNames(); e
-                .hasMoreElements();) {
+        Enumeration e = servletContext.getAttributeNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
             Object value = servletContext.getAttribute(key);
             context.put(key, value);
@@ -150,10 +206,9 @@ public class Bootstrap {
         try {
 
             final Object instance = launcher.getReferenceInstance();
-            webContext.getAutowireCapableBeanFactory()
-                    .autowireBeanProperties(instance,
-                            AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
-                            false);
+            webContext.getAutowireCapableBeanFactory().autowireBeanProperties(
+                    instance, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME,
+                    false);
             launcher.callRun(context);
 
             if (interceptor != null) {
@@ -164,40 +219,6 @@ public class Bootstrap {
                 interceptor.destroy();
             }
         }
-    }
-
-    public void destroy() {
-        logDebug("destroy(): begin");
-
-        GrailsApplication grailsApplication = ApplicationHolder
-                .getApplication();
-
-        GrailsClass[] bootstraps = grailsApplication
-                .getArtefacts(BootstrapArtefactHandler.TYPE);
-        for (int i = bootstraps.length - 1; i >= 0; i--) {
-            GrailsClass bootstrap = bootstraps[i];
-            ((GrailsBootstrapClass) bootstrap).callDestroy();
-        }
-
-        {
-            ServletContextEvent event = new ServletContextEvent(servletContext);
-            for (int i = servletContextListeners.length - 1; i >= 0; i--) {
-                ServletContextListener l = servletContextListeners[i];
-                l.contextDestroyed(event);
-            }
-        }
-
-        if (shutdownHook != null) {
-            if (!shutdownHook.isAlive()) {
-                Runtime.getRuntime().removeShutdownHook(this.shutdownHook);
-                logDebug(true, "destroy(): shutdown hook removed");
-            }
-            this.shutdownHook = null;
-        }
-
-        servletContext = null;
-
-        logDebug(true, "destroy(): end");
     }
 
     private DefaultGrailsLauncherClass getLauncherClass(
@@ -255,6 +276,7 @@ public class Bootstrap {
 
         try {
             r.init(args);
+            r.run();
         } finally {
             try {
                 r.destroy();
