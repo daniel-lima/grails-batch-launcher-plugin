@@ -33,8 +33,9 @@ class DefaultGrailsMainClass extends AbstractGrailsClass {
     @SuppressWarnings("serial")
     private static Closure BLANK_CLOSURE = new Closure(
             DefaultGrailsMainClass.class) {
-        @Override
-        public Object call(Object[] args) {
+        
+        @SuppressWarnings("unused")
+        public Object doCall(Object[] args) {
             return null;
         }
     };

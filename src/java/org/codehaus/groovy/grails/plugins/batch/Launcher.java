@@ -161,16 +161,18 @@ public class Launcher {
                 GrailsApplication grailsApplication = ApplicationHolder
                         .getApplication();
 
-                DefaultGrailsMainClass main = getMainClass(grailsApplication);
-                if (main != null) {
-                    main.callDestroy();
-                }
+                if (grailsApplication != null) {
+                    DefaultGrailsMainClass main = getMainClass(grailsApplication);
+                    if (main != null) {
+                        main.callDestroy();
+                    }
 
-                GrailsClass[] bootstraps = grailsApplication
-                        .getArtefacts(BootstrapArtefactHandler.TYPE);
-                for (int i = bootstraps.length - 1; i >= 0; i--) {
-                    GrailsClass bootstrap = bootstraps[i];
-                    ((GrailsBootstrapClass) bootstrap).callDestroy();
+                    GrailsClass[] bootstraps = grailsApplication
+                            .getArtefacts(BootstrapArtefactHandler.TYPE);
+                    for (int i = bootstraps.length - 1; i >= 0; i--) {
+                        GrailsClass bootstrap = bootstraps[i];
+                        ((GrailsBootstrapClass) bootstrap).callDestroy();
+                    }
                 }
 
                 {
