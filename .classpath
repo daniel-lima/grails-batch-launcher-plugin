@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/groovy"/>
+	<classpathentry kind="src" path="test/cli"/>
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="grails-app/conf"/>
 	<classpathentry kind="src" path="test/unit"/>
@@ -91,7 +92,7 @@
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-crud-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-scripts-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/scripts"/>
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-spring-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
-	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-test-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
+	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-test-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src/java/"/>
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-webflow-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-web-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
 	<classpathentry kind="var" path="GRAILS_HOME_1.3.7/dist/grails-resources-1.3.7.jar" sourcepath="/GRAILS_HOME_1.3.7/src"/>
