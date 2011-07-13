@@ -1,8 +1,6 @@
-package org.codehaus.groovy.grails.plugins.batch
+package org.grails.plugins.batch
 
 import grails.test.*
-
-import org.codehaus.groovy.grails.plugins.batch.DefaultGrailsMainClass
 
 
 class DefaultGrailsMainClassTests extends GrailsUnitTestCase {

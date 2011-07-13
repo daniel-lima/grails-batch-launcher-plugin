@@ -28,7 +28,7 @@ _grails_batch_init_package_called = true
 binding.batch = [:]
 
 def props = binding.batch
-props.launcherClassName = "org.codehaus.groovy.grails.plugins.batch.Launcher"
+props.launcherClassName = "org.grails.plugins.batch.Launcher"
 props.pluginScannerEnabled = true
 props.useGroovyClassLoader = false
 props.autoRecompile = "false".equals(System.getProperty("disable.auto.recompile", "false"))

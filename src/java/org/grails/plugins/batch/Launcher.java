@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.codehaus.groovy.grails.plugins.batch;
+package org.grails.plugins.batch;
 
 import grails.util.Environment;
 
@@ -263,11 +263,11 @@ public class Launcher {
         return value != null ? value : defaultValue;
     }
 
-    void logDebug(String message, Object... extra) {
+    protected void logDebug(String message, Object... extra) {
         logDebug(false, message, extra);
     }
 
-    void logDebug(boolean forceSysOut, String message, Object... extra) {
+    protected void logDebug(boolean forceSysOut, String message, Object... extra) {
         if (logEnabled) {
             StringBuilder msg = new StringBuilder(message);
             for (Object x : extra) {
