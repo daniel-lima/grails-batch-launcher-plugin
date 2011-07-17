@@ -38,9 +38,9 @@ class BatchLauncherGrailsPlugin {
     // TODO Fill in these fields
     def author = "Daniel Henrique Alves Lima"
     def authorEmail = "email_daniel_h@yahoo.com.br"
-    def title = "Plugin to load and run batch (non-webapp/webless) Grails application"
+    def title = "Plugin to load and run batch (non-web/webless) Grails application"
     def description = '''\\
-Plugin to load and run batch (non-webapp/webless) Grails application.
+Plugin to load and run batch (non-web/webless) Grails application.
 '''
 
     // URL to the plugin's documentation

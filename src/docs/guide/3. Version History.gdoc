@@ -9,3 +9,7 @@
 ** BootStrap class usage replaced by Main class usage
 ** Directory selection corrected for 'grails prod batch-run-app' and 'grails dev batch-war'
 ** Modified launcher scripts (.sh and .bat)
+
+* 0.5.5
+** Main package renamed
+** Classes deprecated
