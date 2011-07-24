@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.codehaus.groovy.grails.plugins.batch;
-
-import org.grails.plugin.batch.Launcher;
-
+package org.grails.plugins.batch;
 
 /**
  * @author Daniel Henrique Alves Lima
  */
 @Deprecated
-public class Bootstrap extends Launcher {
-
-    
+public class Launcher extends org.grails.plugin.batch.Launcher {
 
     public static void main(String[] args) {
-        Bootstrap r = new Bootstrap();
+        Launcher r = new Launcher();
         r.logDebug(true, "main(): begin ", new java.util.Date());
 
         try {
