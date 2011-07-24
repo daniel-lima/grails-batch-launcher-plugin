@@ -13,3 +13,7 @@
 * 0.5.5
 ** Main package renamed
 ** Classes deprecated
+
+* 0.5.6
+** Packages renamed to meet the standard
+** Deprecated classes removed

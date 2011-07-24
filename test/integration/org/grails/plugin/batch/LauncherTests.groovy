@@ -1,4 +1,4 @@
-package org.grails.plugins.batch
+package org.grails.plugin.batch
 
 import static org.junit.Assert.*
 

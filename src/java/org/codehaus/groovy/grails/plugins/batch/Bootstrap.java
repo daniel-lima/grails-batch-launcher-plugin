@@ -15,7 +15,7 @@
  */
 package org.codehaus.groovy.grails.plugins.batch;
 
-import org.grails.plugins.batch.Launcher;
+import org.grails.plugin.batch.Launcher;
 
 
 /**

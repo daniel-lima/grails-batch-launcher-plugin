@@ -19,7 +19,7 @@ package org.codehaus.groovy.grails.plugins.batch;
  * @author Daniel Henrique Alves Lima
  */
 @Deprecated
-public class Launcher extends org.grails.plugins.batch.Launcher {
+public class Launcher extends org.grails.plugin.batch.Launcher {
 
     public static void main(String[] args) {
         Launcher r = new Launcher();
