@@ -17,7 +17,7 @@
 /**
  * @author Daniel Henrique Alves Lima
  */
-import org.codehaus.groovy.grails.plugins.logging.Log4jConfig
+import org.codehaus.groovy.grails.plugins.log4j.Log4jConfig
 import org.apache.log4j.LogManager
 
 if (binding.variables.containsKey("_grails_batch_init_package_called")) {
