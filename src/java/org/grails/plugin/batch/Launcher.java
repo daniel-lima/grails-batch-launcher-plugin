@@ -34,7 +34,7 @@ import org.codehaus.groovy.grails.commons.GrailsBootstrapClass;
 import org.codehaus.groovy.grails.commons.GrailsClass;
 import org.codehaus.groovy.grails.support.PersistenceContextInterceptor;
 import org.codehaus.groovy.grails.web.context.GrailsContextLoaderListener;
-import org.codehaus.groovy.grails.web.util.Log4jConfigListener;
+import org.codehaus.groovy.grails.plugins.log4j.web.util.Log4jConfigListener;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.WebApplicationContext;

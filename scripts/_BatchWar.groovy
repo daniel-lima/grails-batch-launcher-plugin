@@ -66,9 +66,14 @@ target(_batchWar: "") {
   }
 
   ant.copy(todir: warDir.absolutePath + "/WEB-INF/lib") {
-    fileset(dir: "${grailsHome}/lib") {
-      include(name: "org.springframework.test-*.jar")
-      include(name: "servlet-api-*.jar")
+    fileset(dir: "${grailsHome}/lib/org.springframework/spring-test/jars") {
+      include(name: "spring-test-*.jar")
+    }
+    
+    fileset(dir: "${grailsHome}/lib/javax.servlet/javax.servlet-api/jars") {
+       include(name: "javax.servlet-api-*.jar")
+    }
+    fileset(dir: "${grailsHome}/lib/javax.transaction/jta/jars") {
       include(name: "jta-*.jar")
     }
   }
